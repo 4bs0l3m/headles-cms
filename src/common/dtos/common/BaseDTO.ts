@@ -2,7 +2,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 
 export class BaseDTO {
   @Prop()
-  id?: string;
+  id: string;
   @Prop()
   code?: string;
   @Prop({ type: Object })

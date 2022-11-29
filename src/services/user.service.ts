@@ -17,6 +17,7 @@ export class UserService {
   ) {}
   createUser(model: User) {
     const createdUser = new this.model({
+      id: model.id,
       email: model.email,
       displayName: model.displayName,
       password: model.password,

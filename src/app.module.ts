@@ -14,6 +14,24 @@ import { ContentSchema } from './common/schemas/content.schema';
 import { ContentType } from './common/dtos/cms/ContentType.dto';
 import { ContentTypeSchema } from './common/schemas/content-type.schema';
 import { AuthController } from './controllers/auth.controller';
+import { ContentFieldDataService } from './services/content-field-data.service';
+import { ContentFieldService } from './services/content-field.service';
+import { ContentLangService } from './services/content-lang.service';
+import { ContentTypeFieldService } from './services/content-type-field.service';
+import { ContentFieldTypeService } from './services/content-field-type.service';
+import { ContentTypeTemplateService } from './services/content-type-template.service';
+import { ContentTypeField } from './common/dtos/cms/ContentTypeField.dto';
+import { ContentTypeFieldSchema } from './common/schemas/content-type-field.schema';
+import { ContentField } from './common/dtos/cms/ContentField.dto';
+import { ContentFieldData } from './common/dtos/cms/ContentFieldData.dto';
+import { ContentFieldType } from './common/dtos/cms/ContentFieldType.dto';
+import { ContentLang } from './common/dtos/cms/ContentLang.dto';
+import { ContentTypeTemplate } from './common/dtos/cms/ContentTypeTemplate.dto';
+import { ContentFieldDataSchema } from './common/schemas/content-field-data.schema';
+import { ContentFieldTypeSchema } from './common/schemas/content-field-type.schema';
+import { ContentFieldSchema } from './common/schemas/content-field.schema';
+import { ContentLangSchema } from './common/schemas/content-lang.schema';
+import { ContentTypeTemplateSchema } from './common/schemas/content-type-template.schema';
 @Module({
   imports: [
     MongooseModule.forRoot(environment.mongoURL),
@@ -21,10 +39,22 @@ import { AuthController } from './controllers/auth.controller';
       { name: User.name, schema: UserSchema },
       { name: Content.name, schema: ContentSchema },
       { name: ContentType.name, schema: ContentTypeSchema },
+      { name: ContentTypeField.name, schema: ContentTypeFieldSchema },
+      { name: ContentFieldData.name, schema: ContentFieldDataSchema },
+      { name: ContentFieldType.name, schema: ContentFieldTypeSchema },
+      { name: ContentLang.name, schema: ContentLangSchema },
+      { name: ContentField.name, schema: ContentFieldSchema },
+      { name: ContentTypeTemplate.name, schema: ContentTypeTemplateSchema },
     ]),
   ],
   controllers: [AppController, AuthController],
   providers: [
+    ContentTypeTemplateService,
+    ContentFieldTypeService,
+    ContentTypeFieldService,
+    ContentLangService,
+    ContentFieldService,
+    ContentFieldDataService,
     ContentTypeService,
     ContentService,
     AppService,
