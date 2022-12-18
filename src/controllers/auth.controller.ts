@@ -2,7 +2,7 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller, Get, Post, Req } from '@nestjs/common';
+import { Controller, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { User } from 'src/common/dtos/auth/User.dto';
 import { UserService } from 'src/services/user.service';
@@ -10,13 +10,15 @@ import { UserService } from 'src/services/user.service';
 @Controller('auth')
 export class AuthController {
   constructor(private userService: UserService) {}
-  @Get('login/:email')
+  @Post('login')
   async getLogin(@Req() request: Request) {
-    const email = request.params['email'];
-    console.log(email);
-    // request.headers.token;
-    if (email) {
-      let _user = await this.userService.getUserByEmail(email);
+    const userCred = request.body;
+
+    if (userCred) {
+      const _user = await this.userService.getUserByEmailPassword(
+        userCred.email,
+        userCred.password,
+      );
       console.log(_user);
       return _user.toJSON();
     }
@@ -24,12 +26,13 @@ export class AuthController {
   @Post('signup')
   async signUp(@Req() request: Request) {
     const userCred: User = request.body;
-
+    const userId = request.header('user-id');
+    console.log('userId :', userId);
     if (userCred) {
-      const _user = await this.userService.createUser(userCred);
+      const _user = await this.userService.create(userCred, userId);
       console.log(_user);
       if (_user) {
-        return { id: _user._id };
+        return { id: _user.id };
       }
     }
   }

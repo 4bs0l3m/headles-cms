@@ -7,5 +7,11 @@ export class ContentFieldData extends BaseDTO {
   ContentId: string;
 
   @Prop()
-  data: any;
+  contentTypeFieldId: string;
+
+  @Prop()
+  lang: string;
+
+  @Prop()
+  data: string;
 }

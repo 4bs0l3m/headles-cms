@@ -4,6 +4,9 @@ import { BaseDTO } from '../common/BaseDTO';
 @Schema()
 export class ContentTypeTemplate extends BaseDTO {
   @Prop()
+  contentTypeId: string;
+
+  @Prop()
   mode: number;
 
   @Prop()

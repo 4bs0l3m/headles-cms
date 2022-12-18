@@ -6,7 +6,6 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DataService {
-  constructor() {}
   getNewMetadata(ownerId?) {
     return {
       createdTime: new Date(),

@@ -5,4 +5,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 export class Content extends BaseDTO {
   @Prop()
   contentTypeId: string;
+
+  @Prop()
+  lang: string;
 }
