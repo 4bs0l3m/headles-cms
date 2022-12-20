@@ -3,15 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../common/dtos/auth/User.dto';
 import { UserDocument } from '../common/schemas/user.schema';
-import { DataService } from './data.service';
 import { ServiceBase } from '../common/abstracts/ServiceBase';
 
 @Injectable()
 export class UserService extends ServiceBase<User, UserDocument> {
-  constructor(
-    @InjectModel(User.name) private _model: Model<UserDocument>,
-    private dataService: DataService,
-  ) {
+  constructor(@InjectModel(User.name) private _model: Model<UserDocument>) {
     super(_model);
   }
 

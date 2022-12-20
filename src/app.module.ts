@@ -29,9 +29,14 @@ import { ContentFieldDataSchema } from './common/schemas/content-field-data.sche
 import { ContentFieldTypeSchema } from './common/schemas/content-field-type.schema';
 import { ContentLangSchema } from './common/schemas/content-lang.schema';
 import { ContentTypeTemplateSchema } from './common/schemas/content-type-template.schema';
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     MongooseModule.forRoot(environment.mongoURL),
+    JwtModule.register({
+      secret: environment.secret,
+      signOptions: { expiresIn: '12h' },
+    }),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Content.name, schema: ContentSchema },
