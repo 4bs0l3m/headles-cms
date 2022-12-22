@@ -14,9 +14,7 @@ export class UserService extends ServiceBase<User, UserDocument> {
   getUserByEmailPassword(email, password) {
     return this._model.findOne({ email: email, password: password }).exec();
   }
-  getUserById(id) {
-    return this._model.findById(id).exec();
-  }
+
   getUsers() {
     return this._model.find().exec();
   }

@@ -8,4 +8,7 @@ export class User extends BaseDTO {
   password: string;
   @Prop()
   displayName: string;
+
+  @Prop()
+  activated: boolean;
 }

@@ -30,6 +30,7 @@ import { ContentFieldTypeSchema } from './common/schemas/content-field-type.sche
 import { ContentLangSchema } from './common/schemas/content-lang.schema';
 import { ContentTypeTemplateSchema } from './common/schemas/content-type-template.schema';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthHelper } from './helpers/auth.helper';
 @Module({
   imports: [
     MongooseModule.forRoot(environment.mongoURL),
@@ -60,6 +61,7 @@ import { JwtModule } from '@nestjs/jwt';
     DataService,
     UserService,
     AppService,
+    AuthHelper,
   ],
   exports: [MongooseModule],
 })
