@@ -4,13 +4,14 @@ import { JwtService } from '@nestjs/jwt';
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller, Get, Post, Req } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { User } from 'src/common/dtos/auth/User.dto';
 import { UserService } from 'src/services/user.service';
 import { AuthHelper } from 'src/helpers/auth.helper';
 import { ResponseDTO } from 'src/common/dtos/common/ResponseDTO';
-import { HTTP_STATUS } from 'src/common/const/http-status.const';
+import { ResponseHelper } from 'src/helpers/response.helper';
+import { ProfileService } from 'src/services/profile.service';
 
 @Controller('auth')
 export class AuthController {
@@ -18,60 +19,69 @@ export class AuthController {
     private userService: UserService,
     private jwtService: JwtService,
     private authHelper: AuthHelper,
+    private responseHelper: ResponseHelper,
+    private profileService: ProfileService,
   ) {}
 
   @Post('login')
   async signIn(@Req() request: Request) {
-    const userCred = request.body;
-    if (userCred) {
-      const _user = await this.userService.getUserByEmailPassword(
-        userCred.email,
-        userCred.password,
-      );
-      const access_token = this.jwtService.sign({
-        id: _user.id,
-        email: _user.email,
-      });
-      return {
-        acces_token: access_token,
-      };
+    try {
+      const userCred = request.body;
+      if (userCred) {
+        const _user = await this.userService.getUserByEmailPassword(
+          userCred.email,
+          userCred.password,
+        );
+        const access_token = this.jwtService.sign({
+          id: _user.id,
+          email: _user.email,
+        });
+        return this.responseHelper.response(access_token, HttpStatus.ACCEPTED);
+      }
+    } catch (error) {
+      return this.responseHelper.response(null, HttpStatus.BAD_REQUEST, error);
     }
   }
 
   @Get('currentUser')
   async currentUser(@Req() request: Request) {
     try {
-      const currentUser = this.authHelper.extractToken<TokenDTO>(
+      const currentUser = this.authHelper.extractToken(
         request.headers.authorization,
       );
       if (currentUser) {
         const user = await this.userService.findById(currentUser.id);
-        return <ResponseDTO>{
-          data: {
+        const profile = await this.profileService.getProfileByUserId(user.id);
+        return this.responseHelper.response(
+          {
             id: user.id,
             email: user.email,
+            profile: profile,
           },
-          code: HTTP_STATUS.SUCCESS,
-        };
+          HttpStatus.ACCEPTED,
+        );
       }
     } catch (error) {
-      return <ResponseDTO>{
-        error: error,
-        code: HTTP_STATUS.BAD_REQUEST,
-      };
+      return this.responseHelper.response(null, HttpStatus.BAD_REQUEST, error);
     }
   }
 
   @Post('signup')
   async signUp(@Req() request: Request) {
-    const userCred: User = request.body;
-
-    if (userCred) {
-      userCred.activated = false;
-      const _user = await this.userService.create(userCred, '');
-      if (_user) {
-        return { id: _user.id };
+    try {
+      const userCred: User = request.body;
+      const user = new User();
+      if (userCred) {
+        user.activated = false;
+        user.email = userCred.email;
+        user.password = userCred.password;
+        const _user = await this.userService.create(user, '');
+        if (_user) {
+          return this.responseHelper.response(_user.id, HttpStatus.ACCEPTED);
+        }
       }
+    } catch (error) {
+      return this.responseHelper.response(null, HttpStatus.BAD_REQUEST, error);
     }
   }
 }

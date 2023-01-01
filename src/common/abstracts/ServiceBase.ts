@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { BaseDTO } from '../dtos/common/BaseDTO';
 
-export class ServiceBase<DTO extends BaseDTO, Document> {
+export class ServiceBase<DTO extends BaseDTO, Document extends BaseDTO> {
   constructor(private model: Model<Document>) {}
   newGuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -13,37 +13,68 @@ export class ServiceBase<DTO extends BaseDTO, Document> {
       },
     );
   }
-  findOne(filter: DTO) {
+  findOne(filter: DTO | any) {
     return this.model.findOne(filter).exec();
   }
 
-  find(filter: DTO) {
+  find(filter: DTO | any) {
     return this.model.find(filter).exec();
   }
   findById(id: string) {
     return this.model.findOne({ id: id }).exec();
   }
-  create(model: DTO, userId: string) {
+  async create(model: DTO, userId: string) {
     model.id = this.newGuid();
     model.metadata = {
       createdBy: userId,
-      createdTime: new Date().toLocaleDateString(),
+      createdTime: new Date(),
+      active: 1,
     };
     const createdModel = new this.model(model);
-
-    return createdModel.save();
+    return (await createdModel.save()).id;
   }
-  async updateById(id, model: DTO, userId: string) {
+  async updateById(id, model: DTO | any, userId: string) {
     const _model = await this.model
       .findOne({
         id: id,
       })
       .exec();
     if (_model) {
-      model.metadata.modifiedBy = userId;
-      model.metadata.modifiedTime = new Date().toLocaleDateString();
-      const updatedModel = await _model.updateOne(model).exec();
-      return updatedModel;
+      _model.metadata.modifiedBy = userId;
+      _model.metadata.modifiedTime = new Date();
+      model.metadata = _model.metadata;
+      model.id = _model.id;
+      const updatedModel = await this.model.findOneAndUpdate(
+        { id: model.id },
+        model,
+      );
+      await updatedModel.save();
+      return await this.model
+        .findOne({
+          id: id,
+        })
+        .exec();
+    } else {
+      return null;
+    }
+  }
+  async deleteById(id, userId) {
+    const _model = (
+      await this.model
+        .findOne({
+          id: id,
+        })
+        .exec()
+    ).toObject<DTO>();
+    if (_model) {
+      _model.metadata.modifiedBy = userId;
+      _model.metadata.modifiedTime = new Date();
+      _model.metadata.active = 2;
+      const deletedModel = await this.model.findOneAndUpdate(
+        { id: id },
+        _model,
+      );
+      return (await deletedModel.save()).id;
     } else {
       return null;
     }

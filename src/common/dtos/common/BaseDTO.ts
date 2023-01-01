@@ -7,9 +7,10 @@ export class BaseDTO {
   code?: string;
   @Prop({ type: Object })
   metadata?: {
-    createdTime?: string;
-    modifiedTime?: string;
+    createdTime?: Date;
+    modifiedTime?: Date;
     createdBy?: string;
     modifiedBy?: string;
+    active?: number;
   };
 }

@@ -1,3 +1,23 @@
+import { ProfileController } from './controllers/profile.controller';
+import { ContentBussinessService } from './bussiness/content-bussiness.service';
+import {
+  Profile,
+  ProfileSchema,
+  ProfileService,
+} from './services/profile.service';
+import { ContentTypeController } from './controllers/content-type.controller';
+import { ContentController } from './controllers/content.controller';
+import {
+  ContentFieldAuth,
+  ContentFieldAuthSchema,
+  ContentFieldAuthService,
+} from './services/content-field-auth.service';
+import {
+  ContentAuth,
+  ContentAuthSchema,
+  ContentAuthService,
+} from './services/content-auth.service';
+import { Role, RoleSchema, RoleService } from './services/role.service';
 import { ContentTypeService } from './services/content-type.service';
 import { ContentService } from './services/content.service';
 import { DataService } from './services/data.service';
@@ -31,6 +51,12 @@ import { ContentLangSchema } from './common/schemas/content-lang.schema';
 import { ContentTypeTemplateSchema } from './common/schemas/content-type-template.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthHelper } from './helpers/auth.helper';
+import { ResponseHelper } from './helpers/response.helper';
+import {
+  UserRole,
+  UserRoleSchema,
+  UserRoleService,
+} from './services/user-role.service';
 @Module({
   imports: [
     MongooseModule.forRoot(environment.mongoURL),
@@ -47,10 +73,27 @@ import { AuthHelper } from './helpers/auth.helper';
       { name: ContentFieldType.name, schema: ContentFieldTypeSchema },
       { name: ContentLang.name, schema: ContentLangSchema },
       { name: ContentTypeTemplate.name, schema: ContentTypeTemplateSchema },
+      { name: Role.name, schema: RoleSchema },
+      { name: ContentAuth.name, schema: ContentAuthSchema },
+      { name: ContentFieldAuth.name, schema: ContentFieldAuthSchema },
+      { name: UserRole.name, schema: UserRoleSchema },
+      { name: Profile.name, schema: ProfileSchema },
     ]),
   ],
-  controllers: [AppController, AuthController],
+  controllers: [
+    ProfileController,
+    ContentTypeController,
+    ContentController,
+    AuthController,
+    AppController,
+  ],
   providers: [
+    ContentBussinessService,
+    ProfileService,
+    UserRoleService,
+    ContentFieldAuthService,
+    ContentAuthService,
+    RoleService,
     ContentService,
     ContentTypeTemplateService,
     ContentFieldTypeService,
@@ -62,6 +105,7 @@ import { AuthHelper } from './helpers/auth.helper';
     UserService,
     AppService,
     AuthHelper,
+    ResponseHelper,
   ],
   exports: [MongooseModule],
 })
