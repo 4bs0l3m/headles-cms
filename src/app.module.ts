@@ -26,7 +26,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { environment } from './env.const';
 import { User } from './common/dtos/auth/User.dto';
 import { UserSchema } from './common/schemas/user.schema';
 import { Content } from './common/dtos/cms/Content.dto';
@@ -59,9 +58,9 @@ import {
 } from './services/user-role.service';
 @Module({
   imports: [
-    MongooseModule.forRoot(environment.mongoURL),
+    MongooseModule.forRoot(process.env.mongoDB),
     JwtModule.register({
-      secret: environment.secret,
+      secret: process.env.secretKey,
       signOptions: { expiresIn: '12h' },
     }),
     MongooseModule.forFeature([
