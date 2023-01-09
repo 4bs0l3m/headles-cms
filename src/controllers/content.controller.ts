@@ -1,11 +1,12 @@
 import { Controller, Get, HttpStatus, Post, Req } from '@nestjs/common';
 import { ResponseHelper } from './../helpers/response.helper';
+import { AuthHelper } from './../helpers/auth.helper';
 import { Content } from './../common/dtos/cms/Content.dto';
 import { ContentService } from './../services/content.service';
-import { AuthHelper } from './../helpers/auth.helper';
 import { Request } from 'express';
 import { ContentFieldDataService } from '../services/content-field-data.service';
 import { ContentFieldData } from '../common/dtos/cms/ContentFieldData.dto';
+import { ContentTypeFieldService } from 'src/services/content-type-field.service';
 
 /*
 https://docs.nestjs.com/controllers#controllers
@@ -18,6 +19,7 @@ export class ContentController {
     private responseHelper: ResponseHelper,
     private contentService: ContentService,
     private contentFieldDataService: ContentFieldDataService,
+    private contentTypeFieldService: ContentTypeFieldService,
   ) {}
   @Get('list/:id')
   getContents(@Req() request: Request) {
@@ -31,6 +33,7 @@ export class ContentController {
     const content = new Content();
     content.lang = payload.lang;
     content.contentTypeId = payload.contentTypeId;
+    content.mode = payload.mode;
     const createdContent = await this.contentService.create(content, user.id);
 
     return await this.responseHelper.response(
@@ -107,15 +110,30 @@ export class ContentController {
     // const user = this.authHelper.extractToken(request.headers.authorization);
     const contentId = request.params.id;
     const content = await this.contentService.findById(contentId);
-
+    const contentTypeFields =
+      await this.contentTypeFieldService.getByContentTypeId(
+        content.contentTypeId,
+      );
     const contentFieldDatas = await this.contentFieldDataService.getByContentId(
       contentId,
     );
-
+    let fieldDatas = [];
+    contentFieldDatas.forEach((fieldItem) => {
+      let contentTypeField = contentTypeFields.find(
+        (x) => x.contentFieldTypeId === fieldItem.contentTypeFieldId,
+      );
+      if (contentTypeField) {
+        fieldDatas.push({
+          id: fieldItem.id,
+          name: contentTypeField.name,
+          value: fieldItem.data,
+        });
+      }
+    });
     return this.responseHelper.response(
       {
         content: content,
-        fieldDatas: contentFieldDatas,
+        fieldDatas: fieldDatas,
       },
       HttpStatus.ACCEPTED,
     );

@@ -3,11 +3,11 @@ https://docs.nestjs.com/controllers#controllers
 */
 
 import { Controller, Post, Req, HttpStatus, Get } from '@nestjs/common';
-import { AuthHelper } from 'src/helpers/auth.helper';
-import { ResponseHelper } from 'src/helpers/response.helper';
+import { AuthHelper } from '../helpers/auth.helper';
+import { ResponseHelper } from '../helpers/response.helper';
 import { Request } from 'express';
-import { Profile, ProfileService } from 'src/services/profile.service';
-import { UserService } from 'src/services/user.service';
+import { Profile, ProfileService } from '../services/profile.service';
+import { UserService } from '../services/user.service';
 
 @Controller('profile')
 export class ProfileController {

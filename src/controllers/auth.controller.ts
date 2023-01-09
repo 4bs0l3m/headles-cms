@@ -6,12 +6,12 @@ https://docs.nestjs.com/controllers#controllers
 
 import { Controller, Get, HttpStatus, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from 'src/common/dtos/auth/User.dto';
-import { UserService } from 'src/services/user.service';
-import { AuthHelper } from 'src/helpers/auth.helper';
-import { ResponseDTO } from 'src/common/dtos/common/ResponseDTO';
-import { ResponseHelper } from 'src/helpers/response.helper';
-import { ProfileService } from 'src/services/profile.service';
+import { User } from '../common/dtos/auth/User.dto';
+import { UserService } from '../services/user.service';
+import { AuthHelper } from '../helpers/auth.helper';
+import { ResponseDTO } from '../common/dtos/common/ResponseDTO';
+import { ResponseHelper } from '../helpers/response.helper';
+import { ProfileService } from '../services/profile.service';
 
 @Controller('auth')
 export class AuthController {

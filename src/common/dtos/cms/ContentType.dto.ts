@@ -5,4 +5,6 @@ import { Prop, Schema } from '@nestjs/mongoose';
 export class ContentType extends BaseDTO {
   @Prop()
   name: string;
+  @Prop()
+  mode: number;
 }

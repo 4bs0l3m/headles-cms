@@ -3,5 +3,5 @@ export class ResponseDTO {
   status?: string;
   error?: any | any[];
   code?: number;
-  timestap?: Date;
+  timestap?: number;
 }

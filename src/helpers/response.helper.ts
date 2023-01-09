@@ -8,7 +8,7 @@ export class ResponseHelper {
       data: data,
       error: error,
       status: status ? status : HttpStatus.ACCEPTED,
-      timestap: new Date(),
+      timestap: new Date().getTime(),
     };
   }
 }

@@ -1,3 +1,10 @@
+import { MessageGateway } from './controllers/message.gateway';
+import { MessageController } from './controllers/message.controller';
+import {
+  Message,
+  MessageSchema,
+  MessageService,
+} from './services/message.service';
 import { ProfileController } from './controllers/profile.controller';
 import { ContentBussinessService } from './bussiness/content-bussiness.service';
 import {
@@ -58,9 +65,9 @@ import {
 } from './services/user-role.service';
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.mongoDB),
+    MongooseModule.forRoot('mongodb://localhost:27017/test'),
     JwtModule.register({
-      secret: process.env.secretKey,
+      secret: 'secretKey',
       signOptions: { expiresIn: '12h' },
     }),
     MongooseModule.forFeature([
@@ -77,9 +84,11 @@ import {
       { name: ContentFieldAuth.name, schema: ContentFieldAuthSchema },
       { name: UserRole.name, schema: UserRoleSchema },
       { name: Profile.name, schema: ProfileSchema },
+      { name: Message.name, schema: MessageSchema },
     ]),
   ],
   controllers: [
+    MessageController,
     ProfileController,
     ContentTypeController,
     ContentController,
@@ -87,8 +96,8 @@ import {
     AppController,
   ],
   providers: [
+    MessageService,
     ContentBussinessService,
-    ProfileService,
     UserRoleService,
     ContentFieldAuthService,
     ContentAuthService,
@@ -105,6 +114,7 @@ import {
     AppService,
     AuthHelper,
     ResponseHelper,
+    ProfileService,
   ],
   exports: [MongooseModule],
 })

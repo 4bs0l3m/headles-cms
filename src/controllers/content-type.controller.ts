@@ -10,7 +10,7 @@ https://docs.nestjs.com/controllers#controllers
 import { Controller, Post, Req, HttpStatus, Get } from '@nestjs/common';
 import { Content } from 'src/common/dtos/cms/Content.dto';
 import { ContentTypeFieldService } from '../services/content-type-field.service';
-import { ContentTypeField } from 'src/common/dtos/cms/ContentTypeField.dto';
+import { ContentTypeField } from '../common/dtos/cms/ContentTypeField.dto';
 
 @Controller('content-type')
 export class ContentTypeController {
