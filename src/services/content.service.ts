@@ -16,4 +16,7 @@ export class ContentService extends ServiceBase<Content, ContentDocument> {
   ) {
     super(_model);
   }
+  getByContentTypeId(contentTypeId: string) {
+    return this.find({ contentTypeId: contentTypeId });
+  }
 }

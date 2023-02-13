@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { ContentFieldDataService } from '../services/content-field-data.service';
 import { ContentFieldData } from '../common/dtos/cms/ContentFieldData.dto';
 import { ContentTypeFieldService } from 'src/services/content-type-field.service';
+import { ContentFieldTypeService } from 'src/services/content-field-type.service';
 
 /*
 https://docs.nestjs.com/controllers#controllers
@@ -20,11 +21,55 @@ export class ContentController {
     private contentService: ContentService,
     private contentFieldDataService: ContentFieldDataService,
     private contentTypeFieldService: ContentTypeFieldService,
+    private contentFieldTypeService: ContentFieldTypeService,
   ) {}
   @Get('list/:id')
-  getContents(@Req() request: Request) {
+  async getContents(@Req() request: Request) {
     const user = this.authHelper.extractToken(request.headers.authorization);
     const contentTypeId = request.params.id;
+    const contentTypes = await (
+      await this.contentService.getByContentTypeId(contentTypeId)
+    ).map(
+      await (async (_content) => {
+        const _fieldDatas = await (
+          await this.contentFieldDataService.getByContentId(_content.id)
+        ).map(
+          await (async (_fieldData) => {
+            const ctField = await this.contentTypeFieldService.findById(
+              _fieldData.contentTypeFieldId,
+            );
+            if (ctField) {
+              const fieldType = await this.contentFieldTypeService.getByFieldId(
+                ctField.contentFieldTypeId,
+              );
+              return {
+                id: _fieldData.id,
+                type: fieldType.name,
+                value: _fieldData.data,
+                name: ctField.name,
+              };
+            } else {
+              return {};
+            }
+          }),
+        );
+        return {
+          content: _content,
+          fieldDatas: _fieldDatas,
+        };
+      }),
+    );
+    contentTypes.forEach(
+      async (item) =>
+        await (
+          await item
+        ).fieldDatas.forEach(async (x) => {
+          let ii = await x;
+          console.log(ii);
+        }),
+    );
+
+    return this.responseHelper.response();
   }
   @Post('create')
   async create(@Req() request: Request) {

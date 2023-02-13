@@ -16,4 +16,9 @@ export class ContentFieldTypeService extends ServiceBase<
   ) {
     super(_model);
   }
+  getByFieldId(fieldId: string) {
+    return this.findOne({
+      contentFieldId: fieldId,
+    });
+  }
 }

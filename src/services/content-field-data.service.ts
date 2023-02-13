@@ -21,10 +21,8 @@ export class ContentFieldDataService extends ServiceBase<
     super(_model);
   }
   getByContentId(contentId: string) {
-    return this._model
-      .find({
-        ContentId: contentId,
-      })
-      .exec();
+    return this.find({
+      ContentId: contentId,
+    });
   }
 }
